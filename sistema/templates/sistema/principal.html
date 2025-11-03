@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitor del Sistema</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --success: #06d6a0;
+      --warning: #ffd166;
+      --danger: #ef476f;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #2d3436;
+      --light: #dfe6e9;
+      --border: #eee;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 30px;
+    }
+
+    .cards {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .value {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin: 8px 0;
+      color: var(--primary);
+    }
+
+    .cpu .value { color: var(--danger); }
+    .ram .value { color: var(--warning); }
+    .disk .value { color: var(--success); }
+
+    .progress {
+      height: 10px;
+      background: var(--light);
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 16px 0 12px;
+      position: relative;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      transition: width 0.8s ease;
+      position: relative;
+    }
+
+    .cpu .bar { background: linear-gradient(90deg, #ff6b6b, #ee5a52); }
+    .ram .bar { background: linear-gradient(90deg, #feca57, #ff9ff3); }
+    .disk .bar { background: linear-gradient(90deg, #1dd1a1, #10ac84); }
+
+    .info {
+      font-size: 0.95rem;
+      color: #636e72;
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 15px;
+      padding: 12px 32px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn:hover {
+      background: #3a56d4;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+    }
+
+    .update {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #74b9ff;
+      font-weight: 500;
+    }
+
+   
+    .team-section {
+      margin-top: 50px;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
+      border: 1px solid #d0d7ff;
+    }
+
+    .team-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .team-members {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .member {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .member:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(67, 97, 238, 0.15);
+      border: 1px solid var(--primary);
+    }
+
+    .name {
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+      text-align: left;
+    }
+
+    .id {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: var(--primary);
+      background: #eef2ff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .footer-line {
+      margin-top: 20px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 1.8rem; }
+      .value { font-size: 2rem; }
+      .card { padding: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      .member {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+      }
+      .id {
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Monitor del Sistema</h1>
+    <div id="system-data">Cargando información...</div>
+    <button class="btn" onclick="updateNow()">Actualizar Ahora</button>
+    <p class="update">Se actualiza automáticamente cada 5 segundos</p>
+  </div>
+
+ 
+  <div class="team-section">
+    <h2 class="team-title">Integrantes del Equipo</h2>
+    <div class="team-members">
+      <div class="member">
+        <span class="name">Ingris Gissell Samayoa</span>
+        <span class="id">202310010702</span>
+      </div>
+      <div class="member">
+        <span class="name">Yudith Skarleth Rodríguez Mejía</span>
+        <span class="id">201330060004</span>
+      </div>
+    </div>
+    <div class="footer-line"></div>
+  </div>
+
+  <script>
+    function updateSystem() {
+      fetch('/data/')
+        .then(r => r.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('system-data').innerHTML = `
+              <div style="text-align:center; padding:20px; color:#e74c3c; font-weight:600;">
+                Error: ${data.error}
+              </div>`;
+            return;
+          }
+
+          document.getElementById('system-data').innerHTML = `
+            <div class="cards">
+              <div class="card cpu">
+                <h3>Uso del CPU</h3>
+                <div class="value">${data.cpu}<span style="font-size:1.2rem;">%</span></div>
+                <div class="progress"><div class="bar" style="width: ${data.cpu}%;"></div></div>
+                <p class="info">
+                  Núcleos: <strong>${data.nucleos}</strong> | 
+                  SO: <strong>${data.so}</strong>
+                </p>
+              </div>
+
+              <div class="card ram">
+                <h3>Memoria RAM</h3>
+                <div class="value">${data.ram_usada}<span style="font-size:1rem;"> GB</span></div>
+                <div class="progress"><div class="bar" style="width: ${data.ram_porcentaje}%;"></div></div>
+                <p class="info">
+                  de ${data.ram_total} GB totales • ${data.ram_porcentaje}% usado
+                </p>
+              </div>
+
+              <div class="card disk">
+                <h3>Disco Duro</h3>
+                <div class="value">${data.disco_usado}<span style="font-size:1rem;"> GB</span></div>
+                <div class="progress"><div class="bar" style="width: ${data.disco_porcentaje}%;"></div></div>
+                <p class="info">
+                  Libre: ${data.disco_libre} GB de ${data.disco_total} GB
+                </p>
+              </div>
+            </div>
+          `;
+        })
+        .catch(() => {
+          document.getElementById('system-data').innerHTML = `
+            <div style="text-align:center; padding:20px; color:#e67e22;">
+              Conexión perdida. Reintentando...
+            </div>`;
+        });
+    }
+
+    function updateNow() {
+      document.querySelector('.update').textContent = 'Actualizando...';
+      updateSystem();
+      setTimeout(() => {
+        document.querySelector('.update').textContent = 'Se actualiza automáticamente cada 5 segundos';
+      }, 1500);
+    }
+
+    // Carga inicial
+    updateSystem();
+    setInterval(updateSystem, 5000);
+  </script>
+</body>
+</html>
